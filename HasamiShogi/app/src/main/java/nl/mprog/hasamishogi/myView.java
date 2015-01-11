@@ -10,6 +10,7 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 
+
 public class myView extends View {
     Paint paint = new Paint();
     private float boardWidth;
@@ -60,14 +61,13 @@ public class myView extends View {
 
     // Draws the stones on the board
     private void drawStones(Canvas canvas){
-        Bitmap[] stones = getStones();
-        Bitmap white = stones[0];
-        Bitmap black = stones[1];
+        Bitmap[] imageOfStone = getStones();
+        Bitmap white = imageOfStone[0];
+        Bitmap black = imageOfStone[1];
 
         for(float i = 0; i < boardWidth; i += boardWidth/boardDimension){
             canvas.drawBitmap(white, i, 0, paint);
             canvas.drawBitmap(black, i, boardWidth - (boardWidth/boardDimension), paint);
-
         }
     }
 
