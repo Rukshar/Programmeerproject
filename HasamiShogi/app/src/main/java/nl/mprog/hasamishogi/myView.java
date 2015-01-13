@@ -14,96 +14,101 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 
 public class myView extends View{
-    Paint paint = new Paint();
+    private Paint grayPaint, brownPaint;
     private float boardWidth;
-    private int boardDimension = 9;
-    private ArrayList<Stone> allWhiteStones;
-    private ArrayList<Stone> allBlackStones;
+    private Board currentBoard;
+    private Bitmap whiteStone, blackStone, bigWhiteStone, bigBlackStone;
 
     public myView(Context context){
         super(context);
-        boardWidth = getScreenSize(context);
+        getScreenSize(context);
+
+        currentBoard = new Board();
+
+        //initialize stone images
+        int stoneDimension = (int) (boardWidth/Board.BOARD_DIMENSION);
+        bigWhiteStone = BitmapFactory.decodeResource(this.getResources(), R.drawable.whitestone);
+        whiteStone = Bitmap.createScaledBitmap(bigWhiteStone, stoneDimension, stoneDimension, true);
+        bigBlackStone = BitmapFactory.decodeResource(this.getResources(), R.drawable.blackstone);
+        blackStone = Bitmap.createScaledBitmap(bigBlackStone, stoneDimension, stoneDimension, true);
+        bigBlackStone = blackStone.copy(Bitmap.Config.ARGB_8888, true);
+
+        //create stones
+        int squaresOnBoard = (Board.BOARD_DIMENSION*Board.BOARD_DIMENSION);
+        for(int i = 0; i < Board.NUMBER_OF_STONES; i++) {
+            currentBoard.addStone(new Stone(Stone.WHITE_STONE, i));
+            currentBoard.addStone(new Stone(Stone.BLACK_STONE, squaresOnBoard - 1 - i));
+        }
+
+        //set all paint colors
+        grayPaint = new Paint();
+        grayPaint.setColor(Color.DKGRAY);
+        grayPaint.setStrokeWidth(10);
+
+        brownPaint = new Paint();
+        brownPaint.setStrokeWidth(0);
+        brownPaint.setColor(Color.rgb(210, 180, 140));
     }
 
     // Returns device's screen width
-    private int getScreenSize(Context context){
+    private void getScreenSize(Context context){
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         int screenWidth = display.getWidth();
-        return screenWidth;
+        boardWidth = screenWidth;
     }
 
     // Draws the 9x9 board
     private void drawBoard(Canvas canvas){
         // Draws a gray border of the board
-        paint.setColor(Color.DKGRAY);
-        paint.setStrokeWidth(10);
-        canvas.drawRect(0, 0, boardWidth, boardWidth, paint);
+        canvas.drawRect(0, 0, boardWidth, boardWidth, grayPaint);
 
         // Fills the rectangle with a brown color
-        paint.setStrokeWidth(0);
-        paint.setColor(Color.rgb(210, 180, 140));
-        canvas.drawRect(10, 10, boardWidth - 10, boardWidth - 10, paint);
+        canvas.drawRect(10, 10, boardWidth - 10, boardWidth - 10, brownPaint);
 
         // Draws the horizontal and vertical lines on the board
-        paint.setColor(Color.DKGRAY);
-        for(float i = boardWidth/boardDimension; i < boardWidth; i += boardWidth/boardDimension){
-            canvas.drawLine(i, 0, i, boardWidth,paint);
-            canvas.drawLine(0, i, boardWidth, i, paint);
+        for(float i = boardWidth/Board.BOARD_DIMENSION; i < boardWidth; i += boardWidth/Board.BOARD_DIMENSION){
+            canvas.drawLine(i, 0, i, boardWidth,grayPaint);
+            canvas.drawLine(0, i, boardWidth, i, grayPaint);
         }
-    }
-
-    // Returns the stones as bitmaps
-    private Bitmap[] getImageStones(){
-        int stoneDimension = (int) (boardWidth/boardDimension);
-        Bitmap whiteStone = BitmapFactory.decodeResource(this.getResources(), R.drawable.whitestone);
-        Bitmap blackStone = BitmapFactory.decodeResource(this.getResources(), R.drawable.blackstone);
-        Bitmap smallWhiteStone = Bitmap.createScaledBitmap(whiteStone, stoneDimension, stoneDimension, true);
-        Bitmap smallBlackStone = Bitmap.createScaledBitmap(blackStone, stoneDimension, stoneDimension, true);
-        return new Bitmap[] {smallWhiteStone, smallBlackStone};
     }
 
     // Draws the stones on the board
     private void drawStones(Canvas canvas){
-        Bitmap[] imageOfStone = getImageStones();
-        Bitmap white = imageOfStone[0];
-        Bitmap black = imageOfStone[1];
-        Board board = new Board();
-        allWhiteStones = board.getWhiteStones();
-        allBlackStones = board.getBlackStones();
+        // Draws the stones
+        float offset = whiteStone.getWidth() / 2;
 
-        // Draws the white stones
-        for(int i = 0; i < allWhiteStones.size(); i ++){
-            Stone whiteStone = allWhiteStones.get(i);
-            int whiteStonePosition = whiteStone.stonePosition;
-            int[] xCoordinateWhite = positionToCoordinates(whiteStonePosition);
-            canvas.drawBitmap(white, xCoordinateWhite[0], 0, paint);
-        }
-
-        // Draws the black stones
-        for(int i = 0; i < allBlackStones.size(); i++){
-            Stone blackStone = allBlackStones.get(i);
-            int blackStonePosition = blackStone.stonePosition;
-            int[] xCoordinateBlack = positionToCoordinates(blackStonePosition);
-            canvas.drawBitmap(black, xCoordinateBlack[0], boardWidth - (boardWidth/boardDimension), paint);
+        ArrayList<Stone> stones = currentBoard.getStones();
+        for(int i = 0; i < stones.size(); i ++){
+            Stone currentStone = stones.get(i);
+            int[] stoneCoordinates = positionToCoordinates(currentStone.getStonePosition());
+            if (currentStone.getStoneColor() == Stone.BLACK_STONE){
+                canvas.drawBitmap(blackStone, stoneCoordinates[0], stoneCoordinates[1], null);
+            }
+            else {
+                canvas.drawBitmap(whiteStone, stoneCoordinates[0], stoneCoordinates[1], null);
+            }
+            if (currentStone.isSelected()) {
+                canvas.drawCircle((float) (stoneCoordinates[0] + offset), (float) (stoneCoordinates[1] + offset), (float) whiteStone.getWidth() / 4 + 5, grayPaint);
+            }
         }
     }
 
     // Gets an index on the board and returns its x and y coordinate
     private int[] positionToCoordinates(int position){
-        int squareOnBoard = (int) (boardWidth/boardDimension);
-        int xPosition = position%boardDimension;
+        int squareOnBoard = (int) (boardWidth/Board.BOARD_DIMENSION);
+        int xPosition = position%Board.BOARD_DIMENSION;
         int xCoordinate = xPosition * squareOnBoard;
-        int yPosition = (position / boardDimension) + 1;
+        int yPosition = (position / Board.BOARD_DIMENSION) + 1;
         int yCoordinate = (yPosition * squareOnBoard) - squareOnBoard;
         return new int[] {xCoordinate,yCoordinate};
     }
 
     // Gets coordinates on the board and returns the index belonging to the coordinates
     private int coordinatesToPosition(float x, float y){
-        int squareOnBoard = (int) (boardWidth/boardDimension);
+        int squareOnBoard = (int) (boardWidth/Board.BOARD_DIMENSION);
         int xIndex = (int) x / squareOnBoard;
-        int yIndex = ((int) y / squareOnBoard) * boardDimension;
+        int yIndex = ((int) y / squareOnBoard) * Board.BOARD_DIMENSION;
         int position = xIndex + yIndex;
         return position;
     }
@@ -117,15 +122,47 @@ public class myView extends View{
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getAction();
-        float x = event.getX();
-        float y = event.getY();
+        float eventX = event.getX();
+        float eventY = event.getY();
 
-        int position = coordinatesToPosition(x,y);
-        System.out.println(position);
-        Stone stone = allWhiteStones.remove(position);
-        System.out.println(allWhiteStones.size());
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                int touchedPosition = coordinatesToPosition(eventX, eventY);
 
+                // if there is a stone at that position
+                if (!currentBoard.isEmpty(touchedPosition)) {
+                    Stone touchedStone = currentBoard.getStone(touchedPosition);
+                    //if there is no stone selected yet
+                    if (currentBoard.hasSelectedStone() == false && touchedStone.getStoneColor() == currentBoard.getCurrentPlayer())
+                        touchedStone.select();
+                        //if there is an other selected stone, we can simply deselect all
+                    else {
+                        touchedStone.deselect();
+                    }
+                }
+                // if there is an empty square at that position
+                else {
+                    //if there is a previously selected stone
+                    if (currentBoard.hasSelectedStone()) {
+                        //move that one to the empty position
+                        if (currentBoard.moveSelectedStoneTo(touchedPosition)){
+                            //the stone is moved successfully
+                            currentBoard.removeCapturedStones(currentBoard.getStone(touchedPosition));
+                            currentBoard.toggleCurrentPlayer();
+                            //ARTIFICIAL INTELLIGENCE CAN BE PLACED HERE -> SINCE OUR TURN IS OVER
+                        }
+                    }
+                }
+                invalidate();
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                break;
+            case MotionEvent.ACTION_UP:
+                // nothing to do
+                break;
+            default:
+                return false;
+        }
         return true;
     }
 }
