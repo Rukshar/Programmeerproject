@@ -18,6 +18,8 @@ public class myView extends View{
     private float boardWidth;
     private Board currentBoard;
     private Bitmap whiteStone, blackStone, bigWhiteStone, bigBlackStone;
+    private int whitePlayerScore;
+    private int blackPlayerScore;
 
     public myView(Context context){
         super(context);
@@ -147,7 +149,20 @@ public class myView extends View{
                         //move that one to the empty position
                         if (currentBoard.moveSelectedStoneTo(touchedPosition)){
                             //the stone is moved successfully
-                            currentBoard.removeCapturedStones(currentBoard.getStone(touchedPosition));
+                            Stone capturedStone = currentBoard.getStone(touchedPosition);
+                            currentBoard.removeCapturedStones(capturedStone);
+                            if (Board.removeStone){
+                                System.out.println(Board.removeStone);
+                                if(capturedStone.getStoneColor() == 1) {
+                                    whitePlayerScore += Board.numberOfCaptures;
+                                    System.out.println(Board.numberOfCaptures + "number of white stones captured");
+                                }else{
+                                    blackPlayerScore += Board.numberOfCaptures;
+                                    System.out.println(Board.numberOfCaptures + "number of black stones captured");
+                                }
+                            }
+                            System.out.println(blackPlayerScore + "score black");
+                            System.out.println(whitePlayerScore + "score white");
                             currentBoard.toggleCurrentPlayer();
                             //ARTIFICIAL INTELLIGENCE CAN BE PLACED HERE -> SINCE OUR TURN IS OVER
                         }

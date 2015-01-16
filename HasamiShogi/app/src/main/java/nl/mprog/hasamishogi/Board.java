@@ -7,6 +7,8 @@ public class Board {
 
     public static final int BOARD_DIMENSION = 9;
     public static final int NUMBER_OF_STONES = 9;
+    public static boolean removeStone;
+    public static int numberOfCaptures;
     private int currentPlayer;
 
     private ArrayList<Stone> stones;
@@ -67,6 +69,7 @@ public class Board {
         }
         return null;
     }
+
 
     public boolean isEmpty(int position){
         for (Stone stone : stones){
@@ -131,6 +134,7 @@ public class Board {
     }
 
     public void removeCapturedStones(Stone placedStone){
+        removeStone = false;
         removeCapturesAlongPath(0, 1, placedStone); //up
         removeCapturesAlongPath(1, 0, placedStone); //right
         removeCapturesAlongPath(0, (-1), placedStone); //down
@@ -144,7 +148,7 @@ public class Board {
         int currentColumn = placedStoneRowColumn[1] + deltaX;
 
         int[] capturePositions = new int[Board.NUMBER_OF_STONES*10];
-        int numberOfCaptures = 0;
+        numberOfCaptures = 0;
 
         while (true){
             int tempPosition = rowColumnToPosition(currentRow, currentColumn);
@@ -166,6 +170,7 @@ public class Board {
             else if (placedStone.getStoneColor() == getStone(tempPosition).getStoneColor()){
                 //remove everything along the path
                 System.out.println(deltaX + "-" + deltaY + " HIT");
+                System.out.println(numberOfCaptures + "number of captured in boardclass");
                 removeStonesAtPositions(capturePositions, numberOfCaptures);
                 break;
             }
@@ -175,6 +180,7 @@ public class Board {
     }
 
     public void removeStonesAtPositions(int[] positions, int numberOfPositions){
+        removeStone = true;
         for (int i = 0; i < numberOfPositions; i++){
             Stone capturedStone = getStone(positions[i]);
             stones.remove(capturedStone);
