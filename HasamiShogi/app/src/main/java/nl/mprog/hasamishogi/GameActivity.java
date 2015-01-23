@@ -1,19 +1,26 @@
 package nl.mprog.hasamishogi;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
+
 
 public class GameActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(new myView(this));
+        Bundle extras = getIntent().getExtras();
+
+        if(extras == null){
+            setContentView(new GameView(this));
+        }else{
+            setContentView(new CPUGameView(this));
+        }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

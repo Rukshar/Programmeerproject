@@ -1,24 +1,26 @@
 package nl.mprog.hasamishogi;
 
-
+/**
+ * Created by Faraicha on 16-1-2015.
+ */
 public class Stone {
-    public static final int WHITE_STONE = 1;
-    public static final int BLACK_STONE = 2;
+    public static final int WHITE_STONE_COLOR = 1;
+    public static final int BLACK_STONE_COLOR = 2;
 
-    private int stoneColor;
     private int stonePosition;
-    private boolean selected;
+    private int stoneColor;
+    private boolean stoneSelected;
 
-    public Stone(int color, int position){
-        stoneColor = color;
+    public Stone(int position, int color){
         stonePosition = position;
-        selected = false;
+        stoneColor = color;
+        stoneSelected = false;
     }
 
-    public Stone(int color, int position, boolean selected){
-        stoneColor = color;
+    public Stone(int position, int color, boolean selected){
         stonePosition = position;
-        this.selected = selected;
+        stoneColor = color;
+        this.stoneSelected = selected;
     }
 
     public int getStonePosition(){
@@ -29,29 +31,25 @@ public class Stone {
         return stoneColor;
     }
 
+    public void setNewPosition(int newPosition){
+        stonePosition = newPosition;
+        deselect();
+    }
+
     public void toggleSelected(){
-        selected = !selected;
-    }
-
-    public void deselect(){
-        selected = false;
-    }
-
-    public Stone copy(){
-        return new Stone(stoneColor, stonePosition, this.selected);
+        stoneSelected = !stoneSelected;
     }
 
     public void select(){
-        selected = true;
+        stoneSelected = true;
+    }
+
+    public void deselect(){
+        stoneSelected = false;
     }
 
     public boolean isSelected(){
-        return selected;
-    }
-
-    public void setStonePosition(int newPosition){
-        stonePosition = newPosition;
-        deselect();
+        return stoneSelected;
     }
 
 }
