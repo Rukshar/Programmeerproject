@@ -10,13 +10,27 @@ public class Board {
     public static final int BOARD_DIMENSION = 9;
     public static final int NUMBER_OF_STONES = 9;
     private ArrayList <Stone> stonesOnBoard;
-    private ArrayList <Integer> allPossibilities;
     private int currentPlayer;
 
     public Board(){
 
         stonesOnBoard = new ArrayList();
         currentPlayer = Stone.WHITE_STONE_COLOR;
+    }
+
+    public Board(ArrayList<Stone> stonesOnBoard, int currentPlayer){
+        this.stonesOnBoard = stonesOnBoard;
+        this.currentPlayer = currentPlayer;
+    }
+
+    public ArrayList<Stone> getStonesOnBoard(int color){
+        ArrayList<Stone> stones = new ArrayList();
+        for (Stone stone : stonesOnBoard){
+            if (stone.getStoneColor() == color){
+                stones.add(stone);
+            }
+        }
+        return stones;
     }
 
     public void addStones(Stone stone){
@@ -76,6 +90,17 @@ public class Board {
         return null;
     }
 
+    public boolean moveStoneTo(int oldposition, int newposition){
+        Stone newstone = getStone(oldposition);
+        newstone.setNewPosition(newposition);
+        return true;
+    }
+    public boolean moveStoneTo(Stone stone, int position){
+        Stone newstone = getStone(stone.getStonePosition());
+        newstone.setNewPosition(position);
+        return true;
+    }
+
     public boolean moveSelectedStoneTo(int position){
         if(position < 0 && position >= BOARD_DIMENSION * BOARD_DIMENSION){
             System.out.println("is niet op bord");
@@ -102,70 +127,40 @@ public class Board {
         return true;
     }
 
-    public ArrayList<Integer> getAllPossibleMoves(int stonePosition){
-        System.out.println(stonePosition + "stonePosition");
-        allPossibilities = new ArrayList();
-        int[] stoneRowColumn = positionToRowColumn(stonePosition);
-        int stoneRow = stoneRowColumn[0];
-        int stoneColumn = stoneRowColumn[1];
+    public ArrayList<Integer> getAllPossibleMoves(Stone stone){
+        int stonePosition = stone.getStonePosition();
+        ArrayList<Integer> possibleMoves = new ArrayList();
 
-        // Check horizontal possibilities
-        int beginRowPosition = stoneRow * BOARD_DIMENSION;
-        int endRowPosition = (beginRowPosition + BOARD_DIMENSION) - 1;
-        System.out.println(beginRowPosition + "beginRow");
-        System.out.println(endRowPosition + "endRow");
-        for(int i = beginRowPosition; i < endRowPosition; i++){
-            if(emptySpots(i)){
-                System.out.println(i + " weet niet hor");
-                allPossibilities.add(i);
+        for (int i = 0; i<Board.BOARD_DIMENSION*Board.BOARD_DIMENSION; i++){
+            if (canMove(stonePosition, i)){
+                possibleMoves.add(i);
             }
         }
 
-        // Check vertical possibilities
-        int beginColumnPosition = stoneColumn;
-        int endColumnPosition = ((BOARD_DIMENSION - 1) * BOARD_DIMENSION + stoneColumn);
-        System.out.println(beginColumnPosition + " beginColumn");
-        System.out.println(endColumnPosition + " endColumn");
-        for(int i = beginColumnPosition; i < endColumnPosition; i+=BOARD_DIMENSION){
-            if(emptySpots(i)){
-                System.out.println(i + " weet niet col");
-                allPossibilities.add(i);
-            }
-        }
-        return allPossibilities;
+        return possibleMoves;
     }
 
     public boolean canMove(int fromPosition, int toPosition){
-        System.out.println(fromPosition + " fromposition");
-        System.out.println(toPosition + " toposition");
+        if (fromPosition == toPosition){
+            return false;
+        }
+
+        if (!emptySpots(toPosition)){
+            return false;
+        }
+
         int[] oldRowColumn = positionToRowColumn(fromPosition);
         int[] newRowColumn = positionToRowColumn(toPosition);
 
-        //System.out.println(oldRowColumn + " old row columns");
-        //System.out.println(newRowColumn + " new row column");
-        //System.out.println(oldRowColumn[0] + " old row columns[0]");
-        //System.out.println(newRowColumn[0] + " new row columns[0]");
-        //System.out.println(oldRowColumn[1] + " old row columns[1]");
-        //System.out.println(newRowColumn[1] + " new row columns[1]");
-
-        //System.out.println(oldRowColumn[0] + "!=" + newRowColumn[0] + "&&" + oldRowColumn[1] + "!=" + newRowColumn[1]);
-        // System.out.println((oldRowColumn[0] != newRowColumn[0] && oldRowColumn[1] != newRowColumn[1]) + " valid move");
-
         //check if it is a valid move (horizontal or vertical)
         if (oldRowColumn[0] != newRowColumn[0] && oldRowColumn[1] != newRowColumn[1]){
-            //System.out.println("FAAALSE");
             return false;
         }
-//        System.out.println("GA VERDER");
-//        System.out.println(Math.min(oldRowColumn[0],newRowColumn[0]) + 1 + "min");
-//        System.out.println(Math.max(oldRowColumn[0], newRowColumn[0])+ "max");
+
 
         //checks if there is no stone along the horizontal path
         for (int i = Math.min(oldRowColumn[0],newRowColumn[0]) + 1; i < Math.max(oldRowColumn[0], newRowColumn[0]); i++){
-            System.out.println(i + "i");
             int tempPosition = rowColumnToPosition(i, oldRowColumn[1]);
-            System.out.println(tempPosition + "tempposition");
-            System.out.println(fromPosition + " - " + toPosition + " - " + tempPosition);
             if (!emptySpots(tempPosition)){
                 return false;
             }
@@ -174,12 +169,11 @@ public class Board {
         //checks if there is no stone along the vertical path
         for (int i = Math.min(oldRowColumn[1],newRowColumn[1]) + 1; i < Math.max(oldRowColumn[1], newRowColumn[1]); i++){
             int tempPosition = rowColumnToPosition(oldRowColumn[0], i);
-            System.out.println(fromPosition + " - " + toPosition + " - " + tempPosition + "vertical");
             if (!emptySpots(tempPosition)){
                 return false;
             }
         }
-        //System.out.println("I WAS HERE");
+
         return true;
     }
 
@@ -260,7 +254,31 @@ public class Board {
     }
 
     public Board copy(){
-        return new Board();
+        ArrayList<Stone> newStones = new ArrayList();
+        for (Stone stone : stonesOnBoard){
+            newStones.add(stone.copy());
+        }
+
+        return new Board(newStones, currentPlayer);
+    }
+
+    public int getHeuristicValue(){
+        int value = 0;
+
+        for (Stone stone : stonesOnBoard){
+            if (stone.getStoneColor() == Stone.BLACK_STONE_COLOR){
+                value++;
+            }
+            else {
+                value--;
+            }
+        }
+
+        return value;
+    }
+
+    public void replaceStones(ArrayList<Stone> newStones){
+        stonesOnBoard = newStones;
     }
 
 }

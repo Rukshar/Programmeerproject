@@ -14,10 +14,10 @@ public class GameActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
 
-        if(extras == null){
-            setContentView(new GameView(this));
-        }else{
+        if(extras.getBoolean("cpu")){
             setContentView(new CPUGameView(this));
+        }else{
+            setContentView(new GameView(this));
         }
     }
 

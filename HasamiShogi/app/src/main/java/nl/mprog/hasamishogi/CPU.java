@@ -17,8 +17,9 @@ public class CPU {
     private ArrayList<Integer> randomPosition;
     private ArrayList<Integer> realRandomPosition;
     private Random randomGenerator;
+    private int selectedStonePosition;
 
-    public CPU(Board board){
+    public CPU(Board board) {
         currentBoard = board;
         allStones = new ArrayList();
         randomGenerator = new Random();
@@ -29,30 +30,27 @@ public class CPU {
 
     }
 
-    public void cpuMove(){
+    public void cpuMove() {
         randomPosition = new ArrayList();
-        allStones = currentBoard.getStonesOnBoard();
-        Stone anyStone = anyStone();
-        if(anyStone.getStoneColor() == Stone.BLACK_STONE_COLOR) {
-            int selectedStonePosition = anyStone.getStonePosition();
-            randomPosition = currentBoard.getAllPossibleMoves(selectedStonePosition);
-            System.out.println(randomPosition.size() + "voor validatie");
-            System.out.println(randomPosition + "Arraylist randomPos");
-            removeInvalidPositions(selectedStonePosition);
-            System.out.println(realRandomPosition.size() + "na validatie");
-            System.out.println(realRandomPosition + "NA");
-            int anyPosition = anyPosition();
-            //System.out.println(randomPosition + "Arraylist randomPos");
-            if (!currentBoard.emptySpots(selectedStonePosition)) {
-                Stone touchedStone = currentBoard.getStone(selectedStonePosition);
-                if (currentBoard.hasSelectedStone() == false && touchedStone.getStoneColor() == currentBoard.getCurrentPlayer()) {
-                    touchedStone.select();
-                    System.out.println(currentBoard.hasSelectedStone() + "has selected stone");
-                    currentBoard.moveSelectedStoneTo(anyPosition);
-                } //else {
-                //touchedStone.deselect();
-                // }
-            }
+        Stone anyBlackStone = anyStone();
+        int selectedStonePosition = anyBlackStone.getStonePosition();
+        randomPosition = currentBoard.getAllPossibleMoves(anyBlackStone);
+        System.out.println(randomPosition.size() + "voor validatie");
+        System.out.println(randomPosition + "Arraylist randomPos");
+        removeInvalidPositions(selectedStonePosition);
+        System.out.println(realRandomPosition.size() + "na validatie");
+        System.out.println(realRandomPosition + "NA");
+        int anyPosition = anyPosition();
+        //System.out.println(randomPosition + "Arraylist randomPos");
+        if (!currentBoard.emptySpots(selectedStonePosition)) {
+            Stone touchedStone = currentBoard.getStone(selectedStonePosition);
+            if (currentBoard.hasSelectedStone() == false && touchedStone.getStoneColor() == currentBoard.getCurrentPlayer()) {
+                touchedStone.select();
+                System.out.println(currentBoard.hasSelectedStone() + "has selected stone");
+                currentBoard.moveSelectedStoneTo(anyPosition);
+            } //else {
+            //touchedStone.deselect();
+            // }
 //            else {
 //                if (currentBoard.hasSelectedStone()) {
 //                    if (currentBoard.moveSelectedStoneTo(40)) {
@@ -62,57 +60,59 @@ public class CPU {
 //                }
 //            }
 
-            //int randomStone = 0 + (int)(Math.random() * ((8 - 0) + 1));
+        //int randomStone = 0 + (int)(Math.random() * ((8 - 0) + 1));
 //        Stone stone = currentBoard.getStone(randomStone);
 //        stone.setNewPosition(randomPosition);
 //        System.out.println(randomPosition + " randomposition");
-        }else{
-            cpuMove();
-        }
-
     }
 
-    public void removeInvalidPositions(int position){
+}
+
+    public void removeInvalidPositions(int position) {
         realRandomPosition = new ArrayList();
-        int [] oldRowColumn = currentBoard.positionToRowColumn(position);
+        int[] oldRowColumn = currentBoard.positionToRowColumn(position);
         //System.out.println(oldRowColumn[0] + "old row");
         //System.out.println(oldRowColumn[1] + "old row");
-        for(int i = 0; i < randomPosition.size(); i++){
+        for (int i = 0; i < randomPosition.size(); i++) {
             int newPosition = randomPosition.get(i);
-            int [] newRowColumn = currentBoard.positionToRowColumn(newPosition);
+            int[] newRowColumn = currentBoard.positionToRowColumn(newPosition);
             //System.out.println(newRowColumn[0] + "new row");
             //System.out.println(newRowColumn[1] + "new col");
             //System.out.println((oldRowColumn[0] != newRowColumn[0] && oldRowColumn[1] == newRowColumn[1]) + "valideer lijst");
-            if(!(oldRowColumn[0] != newRowColumn[0] && oldRowColumn[1] != newRowColumn[1])){
-                //System.out.println(i + "verwijderende getallen");
-                realRandomPosition.add(newPosition);
-            }
+
 
             //checks if there is no stone along the horizontal path
-            for (int j = Math.min(oldRowColumn[0],newRowColumn[0]) + 1; j < Math.max(oldRowColumn[0], newRowColumn[0]); j++){
+            for (int j = Math.min(oldRowColumn[0], newRowColumn[0]) + 1; j < Math.max(oldRowColumn[0], newRowColumn[0]); j++) {
                 int tempPosition = currentBoard.rowColumnToPosition(j, oldRowColumn[1]);
-                if (currentBoard.emptySpots(tempPosition)){
-                    realRandomPosition.add(newPosition);
+                if (!currentBoard.emptySpots(tempPosition)) {
+                    continue;
                 }
             }
 
             //checks if there is no stone along the vertical path
-            for (int j = Math.min(oldRowColumn[1],newRowColumn[1]) + 1; j < Math.max(oldRowColumn[1], newRowColumn[1]); j++){
+            for (int j = Math.min(oldRowColumn[1], newRowColumn[1]) + 1; j < Math.max(oldRowColumn[1], newRowColumn[1]); j++) {
                 int tempPosition = currentBoard.rowColumnToPosition(oldRowColumn[0], j);
-                if (currentBoard.emptySpots(tempPosition)){
-                    realRandomPosition.add(newPosition);
+                if (!currentBoard.emptySpots(tempPosition)) {
+                    continue;
                 }
             }
+
+            realRandomPosition.add(newPosition);
         }
     }
 
-    public Stone anyStone(){
+    public Stone anyStone() {
+        allStones = currentBoard.getStonesOnBoard();
         int index = randomGenerator.nextInt(allStones.size());
         Stone randomStone = allStones.get(index);
+        while (randomStone.getStoneColor() != Stone.BLACK_STONE_COLOR) {
+            index = randomGenerator.nextInt(allStones.size());
+            randomStone = allStones.get(index);
+        }
         return randomStone;
     }
 
-    public int anyPosition(){
+    public int anyPosition() {
         int index = randomGenerator.nextInt(realRandomPosition.size());
         int anyPosition = realRandomPosition.get(index);
         return anyPosition;

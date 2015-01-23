@@ -20,7 +20,7 @@ public class Stone {
     public Stone(int position, int color, boolean selected){
         stonePosition = position;
         stoneColor = color;
-        this.stoneSelected = selected;
+        stoneSelected = selected;
     }
 
     public int getStonePosition(){
@@ -52,4 +52,7 @@ public class Stone {
         return stoneSelected;
     }
 
+    public Stone copy(){
+        return new Stone(stonePosition, stoneColor, stoneSelected);
+    }
 }
