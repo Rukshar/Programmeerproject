@@ -72,7 +72,7 @@ public class GameView extends View{
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         int screenWidth = display.getWidth();
-        int screenHeight = display.getHeight();
+        screenHeight = display.getHeight();
         boardWidth = screenWidth;
     }
 
@@ -110,8 +110,8 @@ public class GameView extends View{
     }
 
     private void drawWinScreen(Canvas canvas, String winner){
-        canvas.drawRect(0, boardWidth/3, boardWidth, boardWidth + (boardWidth/3), brownPaint);
-        //canvas.drawText(winner + "has won", boardWidth/3,boardWidth/6,textPaintBold);
+        canvas.drawRect(0, 0, boardWidth, screenHeight, brownPaint);
+        canvas.drawText(winner + " has won", boardWidth/4,boardWidth/6,textPaintBold);
     }
 
     // Draws the stones

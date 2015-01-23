@@ -15,12 +15,13 @@ import java.util.ArrayList;
 
 public class CPUGameView extends View{
 
-    private float boardWidth;
+    private float boardWidth, screenHeight;
     private Paint statPaint, textPaint,textPaintBold, brownPaint, grayPaint, whitePaint;
     private Bitmap bigWhiteStone,bigBlackStone,whiteStone,blackStone;
     public static Board board;
     private CPU cpuPlayer;
     private boolean cpuThinking;
+    private int whiteScore, blackScore;
 
     public CPUGameView(Context context){
         super(context);
@@ -75,6 +76,7 @@ public class CPUGameView extends View{
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         int screenWidth = display.getWidth();
+        screenHeight = display.getHeight();
         boardWidth = screenWidth;
     }
 
@@ -86,8 +88,8 @@ public class CPUGameView extends View{
     // Draws the text in the statistics rectangle
     private void drawRectText(Canvas canvas) {
         int[] scores = board.getScore();
-        int whiteScore = scores[0];
-        int blackScore = scores[1];
+        whiteScore = scores[0];
+        blackScore = scores[1];
         String stringWhiteScore = Integer.toString(whiteScore);
         String stringBlackScore = Integer.toString(blackScore);
         int currentPlayer = board.getCurrentPlayer();
@@ -119,8 +121,8 @@ public class CPUGameView extends View{
     }
 
     private void drawWinScreen(Canvas canvas, String winner){
-        canvas.drawRect(0, boardWidth/3, boardWidth, boardWidth + (boardWidth/3), brownPaint);
-        canvas.drawText(winner + "has won", 0,boardWidth/6,textPaintBold);
+        canvas.drawRect(0, 0, boardWidth, screenHeight, brownPaint);
+        canvas.drawText(winner + " has won", boardWidth/4,boardWidth/6,textPaintBold);
     }
 
     // Draws the stones
@@ -176,6 +178,13 @@ public class CPUGameView extends View{
         drawRectText(canvas);
         drawBoard(canvas);
         drawStones(canvas);
+
+        if(whiteScore == 4){
+            drawWinScreen(canvas, "player 2");
+        }
+        if(blackScore == 4){
+            drawWinScreen(canvas, "player 1");
+        }
     }
 
     @Override
