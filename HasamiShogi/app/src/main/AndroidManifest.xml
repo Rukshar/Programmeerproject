@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="nl.mprog.hasamishogi" >
 
-
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
@@ -26,8 +25,12 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".BluetoothActivity"
-            android:label="@string/title_activity_bluetooth" >
+            android:name=".WinGameActivity"
+            android:label="@string/title_activity_win_game" >
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" >
         </activity>
     </application>
 

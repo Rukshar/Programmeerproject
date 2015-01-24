@@ -24,8 +24,8 @@
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:id="@+id/playbluetoothbutton"
-        android:text="Play with Bluetooth"
+        android:id="@+id/playcpu"
+        android:text="Play against CPU"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/playbutton"/>
@@ -33,10 +33,10 @@
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:id="@+id/playcpu"
-        android:text="Play against CPU"
+        android:id="@+id/settings"
+        android:text="Settings"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/playbluetoothbutton"/>
+        android:layout_below="@+id/playcpu"/>
 
 </RelativeLayout>

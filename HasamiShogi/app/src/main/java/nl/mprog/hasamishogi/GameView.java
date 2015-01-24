@@ -96,6 +96,21 @@ public class GameView extends View{
             canvas.drawText("Player 1: " + stringWhiteScore, 0, boardWidth/6, textPaint);
             canvas.drawText("Player 2: " + stringBlackScore, boardWidth/2, boardWidth/6, textPaintBold);
         }
+        winGame();
+    }
+
+    public void winGame(){
+        if (whiteScore == 4) {
+            Intent intent = new Intent(this.getContext(), WinGameActivity.class);
+            intent.putExtra("winner", "Player 2");
+            this.getContext().startActivity(intent);
+        }
+        if (blackScore == 4) {
+            Intent intent = new Intent(this.getContext(), WinGameActivity.class);
+            intent.putExtra("winner", "Player 1");
+            this.getContext().startActivity(intent);
+        }
+
     }
 
     // Draws the 9x9 board with border and lines
@@ -107,11 +122,6 @@ public class GameView extends View{
             canvas.drawLine(i, boardWidth/3, i, boardWidth + (boardWidth/3), grayPaint);
             canvas.drawLine(0, i + (boardWidth/3), boardWidth, i + (boardWidth/3), grayPaint);
         }
-    }
-
-    private void drawWinScreen(Canvas canvas, String winner){
-        canvas.drawRect(0, 0, boardWidth, screenHeight, brownPaint);
-        canvas.drawText(winner + " has won", boardWidth/4,boardWidth/6,textPaintBold);
     }
 
     // Draws the stones
@@ -167,13 +177,6 @@ public class GameView extends View{
         drawRectText(canvas);
         drawBoard(canvas);
         drawStones(canvas);
-
-        if(whiteScore == 4){
-            drawWinScreen(canvas, "player 2");
-        }
-        if(blackScore == 4){
-            drawWinScreen(canvas, "player 1");
-        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package nl.mprog.hasamishogi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -19,7 +20,6 @@ public class CPUGameView extends View {
     private Paint statPaint, textPaint, textPaintBold, brownPaint, grayPaint, whitePaint;
     private Bitmap bigWhiteStone, bigBlackStone, whiteStone, blackStone;
     public static Board board;
-    //private CPU cpuPlayer;
     private AI cpuPlayer;
     private int whiteScore, blackScore;
     private int cpuPlayerColor;
@@ -64,7 +64,7 @@ public class CPUGameView extends View {
 
         // Initialize CPU player
         cpuPlayerColor = Stone.BLACK_STONE_COLOR;
-        cpuPlayer = new AI(AI.HARD_CPU, cpuPlayerColor);
+        cpuPlayer = new AI(AI.EASY_CPU, cpuPlayerColor);
 
         // Place Stones on Board
         for (int i = 0; i < Board.NUMBER_OF_STONES; i++) {
@@ -103,13 +103,23 @@ public class CPUGameView extends View {
             canvas.drawText("Player 1: " + stringWhiteScore, 0, boardWidth / 6, textPaint);
             canvas.drawText("CPU: " + stringBlackScore, boardWidth / 2, boardWidth / 6, textPaintBold);
         }
+        winGame();
+    }
 
+    public void winGame(){
         if (whiteScore == 4) {
-            drawWinScreen(canvas, "player 2");
+            Intent intent = new Intent(this.getContext(), WinGameActivity.class);
+            intent.putExtra("winner", "CPU");
+            intent.putExtra("cpu", true);
+            this.getContext().startActivity(intent);
         }
         if (blackScore == 4) {
-            drawWinScreen(canvas, "player 1");
+            Intent intent = new Intent(this.getContext(), WinGameActivity.class);
+            intent.putExtra("winner", "Player 1");
+            intent.putExtra("cpu", true);
+            this.getContext().startActivity(intent);
         }
+
     }
 
     // Draws the 9x9 board with border and lines
@@ -121,11 +131,6 @@ public class CPUGameView extends View {
             canvas.drawLine(i, boardWidth / 3, i, boardWidth + (boardWidth / 3), grayPaint);
             canvas.drawLine(0, i + (boardWidth / 3), boardWidth, i + (boardWidth / 3), grayPaint);
         }
-    }
-
-    private void drawWinScreen(Canvas canvas, String winner) {
-        canvas.drawRect(0, 0, boardWidth, screenHeight, brownPaint);
-        canvas.drawText(winner + " has won", boardWidth / 4, boardWidth / 6, textPaintBold);
     }
 
     // Draws the stones
@@ -185,13 +190,6 @@ public class CPUGameView extends View {
         drawRectText(canvas);
         drawBoard(canvas);
         drawStones(canvas);
-
-        if (whiteScore == 4) {
-            drawWinScreen(canvas, "player 2");
-        }
-        if (blackScore == 4) {
-            drawWinScreen(canvas, "player 1");
-        }
     }
 
     private boolean isCpuTurn(){
@@ -229,8 +227,15 @@ public class CPUGameView extends View {
                             board.removeCapturedStones(movedStone);
                             invalidate();
                             board.toggleCurrentPlayer();
-
-                            aiDoTurn();
+                            new Thread(new Runnable() {
+                                // Computer move
+                                public void run() {
+                                    synchronized (this){
+                                        aiDoTurn();
+                                        postInvalidate();
+                                    }
+                                }
+                            }).start();
                         }
                     }
                 }
