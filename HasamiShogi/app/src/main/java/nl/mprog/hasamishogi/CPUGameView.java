@@ -105,7 +105,6 @@ public class CPUGameView extends View {
         blackScore = scores[1];
         String stringWhiteScore = Integer.toString(whiteScore);
         String stringBlackScore = Integer.toString(blackScore);
-        int currentPlayer = board.getCurrentPlayer();
         if (!isCpuTurn()) {
             canvas.drawText("CPU: " + stringBlackScore, boardWidth / 2, boardWidth / 6, textPaint);
             canvas.drawText("Player 1: " + stringWhiteScore, 0, boardWidth / 6, textPaintBold);
@@ -118,13 +117,13 @@ public class CPUGameView extends View {
     }
 
     public void winGame(){
-        if (whiteScore == 4) {
+        if (whiteScore >= 4) {
             Intent intent = new Intent(this.getContext(), WinGameActivity.class);
             intent.putExtra("winner", "CPU");
             intent.putExtra("cpu", true);
             this.getContext().startActivity(intent);
         }
-        if (blackScore == 4) {
+        if (blackScore >= 4) {
             Intent intent = new Intent(this.getContext(), WinGameActivity.class);
             intent.putExtra("winner", "Player 1");
             intent.putExtra("cpu", true);
