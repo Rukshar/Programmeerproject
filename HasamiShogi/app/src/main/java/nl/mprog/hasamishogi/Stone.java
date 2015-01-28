@@ -1,8 +1,15 @@
 package nl.mprog.hasamishogi;
 
 /**
- * Created by Faraicha on 16-1-2015.
+ * Rukshar Wagid Hosain
+ * faraicha@live.nl
+ * 10694676
  */
+
+/**
+ * THIS CLASS HOLDS ALL THE INFORMATION ABOUT ONE STONE ON THE BOARD
+ */
+
 public class Stone {
     public static final int WHITE_STONE_COLOR = 1;
     public static final int BLACK_STONE_COLOR = 2;
@@ -34,10 +41,6 @@ public class Stone {
     public void setNewPosition(int newPosition){
         stonePosition = newPosition;
         deselect();
-    }
-
-    public void toggleSelected(){
-        stoneSelected = !stoneSelected;
     }
 
     public void select(){

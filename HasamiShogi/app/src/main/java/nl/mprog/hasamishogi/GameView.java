@@ -1,5 +1,15 @@
 package nl.mprog.hasamishogi;
 
+/**
+ * Rukshar Wagid Hosain
+ * faraicha@live.nl
+ * 10694676
+ */
+
+/**
+ * THIS CLASS HOLDS THE GAMEVIEW FOR THE TWO PLAYER OPTION
+ */
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,7 +26,7 @@ import java.util.ArrayList;
 
 public class GameView extends View{
 
-    private float boardWidth, screenHeight;
+    private float boardWidth;
     private Paint statPaint, textPaint,textPaintBold, brownPaint, grayPaint, whitePaint;
     private Bitmap bigWhiteStone,bigBlackStone,whiteStone,blackStone;
     private Board board;
@@ -51,7 +61,7 @@ public class GameView extends View{
         whitePaint.setColor(Color.WHITE);
 
         // Load bitmaps for stones
-        int stoneDimension = (int) (boardWidth/9);
+        int stoneDimension = (int) (boardWidth/Board.NUMBER_OF_STONES);
         bigWhiteStone = BitmapFactory.decodeResource(this.getResources(), R.drawable.whitestone);
         whiteStone = Bitmap.createScaledBitmap(bigWhiteStone, stoneDimension, stoneDimension, true);
         bigBlackStone = BitmapFactory.decodeResource(this.getResources(), R.drawable.blackstone);
@@ -72,7 +82,6 @@ public class GameView extends View{
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         int screenWidth = display.getWidth();
-        screenHeight = display.getHeight();
         boardWidth = screenWidth;
     }
 
@@ -110,7 +119,6 @@ public class GameView extends View{
             intent.putExtra("winner", "Player 1");
             this.getContext().startActivity(intent);
         }
-
     }
 
     // Draws the 9x9 board with border and lines
@@ -139,10 +147,10 @@ public class GameView extends View{
                 canvas.drawBitmap(blackStone, x, y + (boardWidth/3), null);
             }
             if (tempStone.isSelected() && tempStone.getStoneColor() == Stone.WHITE_STONE_COLOR) {
-                canvas.drawCircle((float) (x + offset), (float) (y + offset + (boardWidth/3)), (float) whiteStone.getWidth() / 4 + 5, whitePaint);
+                canvas.drawCircle((x + offset), (y + offset + (boardWidth/3)), (float) whiteStone.getWidth() / 4 + 5, whitePaint);
             }
             else if(tempStone.isSelected() && tempStone.getStoneColor() == Stone.BLACK_STONE_COLOR){
-                canvas.drawCircle((float) (x + offset), (float) (y + offset + (boardWidth/3)), (float) whiteStone.getWidth() / 4 + 5, grayPaint);
+                canvas.drawCircle((x + offset), (y + offset + (boardWidth/3)), (float) whiteStone.getWidth() / 4 + 5, grayPaint);
             }
         }
     }
@@ -160,12 +168,10 @@ public class GameView extends View{
 
     // Returns the index belonging to coordinates on the board
     private int coordinatesToPosition(float x, float y){
-        //System.out.println(x + " x coord");
-        //System.out.println(y + " y coord");
         int squareOnBoard = (int) (boardWidth/Board.BOARD_DIMENSION);
         int xIndex = (int) x / squareOnBoard;
-        int tussenstap = (int) ((int) y - (boardWidth/3));
-        int yIndex = (tussenstap / squareOnBoard) * Board.BOARD_DIMENSION;
+        int deltaY = (int) ((int) y - (boardWidth/3));
+        int yIndex = (deltaY / squareOnBoard) * Board.BOARD_DIMENSION;
         int position = xIndex + yIndex;
         return position;
     }
@@ -187,7 +193,6 @@ public class GameView extends View{
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 int pressedPosition = coordinatesToPosition(x, y);
-                //System.out.println(pressedPosition);
                 if(!board.emptySpots(pressedPosition)){
                     Stone touchedStone = board.getStone(pressedPosition);
                     if(board.hasSelectedStone() == false && touchedStone.getStoneColor() == board.getCurrentPlayer()){

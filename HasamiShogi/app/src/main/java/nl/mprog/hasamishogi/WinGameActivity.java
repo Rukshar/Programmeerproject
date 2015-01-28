@@ -1,5 +1,15 @@
 package nl.mprog.hasamishogi;
 
+/**
+ * Rukshar Wagid Hosain
+ * faraicha@live.nl
+ * 10694676
+ */
+
+/**
+ * THIS CLASS IS THE WINACTIVITY
+ */
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -52,7 +62,6 @@ public class WinGameActivity extends Activity {
                 startActivity(intent);
             }
         });
-
     }
 
 }

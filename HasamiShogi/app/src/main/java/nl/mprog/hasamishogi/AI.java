@@ -1,11 +1,18 @@
 package nl.mprog.hasamishogi;
 
+/**
+ * Rukshar Wagid Hosain
+ * faraicha@live.nl
+ * 10694676
+ */
+
+/**
+ * THIS CLASS IS THE ARTIFICIAL INTELLIGENCE BEHIND THE CPU
+ */
+
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * Created by Faraicha on 23-1-2015.
- */
 public class AI {
     public static final int EASY_CPU = 1;
     public static final int HARD_CPU = 2;
@@ -67,12 +74,6 @@ public class AI {
 
         board.getStone(bestMoveFrom).setNewPosition(bestMoveTo);
         board.removeCapturedStones(board.getStone(bestMoveTo));
-        System.out.println("CPU MOVE FROM: " + bestMoveFrom + " TO: " + bestMoveTo);
-
-    }
-
-    public void f(String n){
-        System.out.println(n);
     }
 
     public int[] minimax (Board board, int depth, int currentPlayer, int fromPos, int toPos){

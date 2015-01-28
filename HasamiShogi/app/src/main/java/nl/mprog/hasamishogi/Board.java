@@ -1,10 +1,17 @@
 package nl.mprog.hasamishogi;
 
-import java.util.ArrayList;
+/**
+ * Rukshar Wagid Hosain
+ * faraicha@live.nl
+ * 10694676
+ */
 
 /**
- * Created by Faraicha on 16-1-2015.
+ * THIS CLASS HOLDS ALL THE INFORMATION OF THE BOARD
  */
+
+import java.util.ArrayList;
+
 public class Board {
     public static final int BOARD_DIMENSION = 9;
     public static final int NUMBER_OF_STONES = 9;
@@ -89,26 +96,19 @@ public class Board {
         return null;
     }
 
-    public boolean moveStoneTo(int oldposition, int newposition){
-        Stone newstone = getStone(oldposition);
-        newstone.setNewPosition(newposition);
-        return true;
-    }
     public boolean moveStoneTo(Stone stone, int position){
-        Stone newstone = getStone(stone.getStonePosition());
-        newstone.setNewPosition(position);
+        Stone newStone = getStone(stone.getStonePosition());
+        newStone.setNewPosition(position);
         return true;
     }
 
     public boolean moveSelectedStoneTo(int position){
         if(position < 0 && position >= BOARD_DIMENSION * BOARD_DIMENSION){
-            System.out.println("is niet op bord");
             return false;
         }
         Stone selectedStone = getSelectedStone();
         //extra check (should not be necessary)
         if(selectedStone == null){
-            System.out.println("geen selected stone");
             return false;
         }
 
@@ -116,13 +116,11 @@ public class Board {
 
         //check if there are no other stones on this path
         if (!canMove(oldPosition, position)){
-            System.out.println("cannot move stone to pos");
             return false;
         }
 
         //survived all the checks, so it must be safe to move the stone
         selectedStone.setNewPosition(position);
-        System.out.println("move succesvol");
         return true;
     }
 
@@ -135,7 +133,6 @@ public class Board {
                 possibleMoves.add(i);
             }
         }
-
         return possibleMoves;
     }
 
@@ -197,12 +194,10 @@ public class Board {
             Stone tempStone = getStone(tempPosition);
 
             if (currentRow < 0 || currentRow >= BOARD_DIMENSION || currentColumn < 0 || currentColumn >= BOARD_DIMENSION){
-                //out of bounds -> do some fancy shit
-                //System.out.println(deltaX + "-" + deltaY + " out of bounds");
+                //out of bounds
                 break;
             }
             else if (emptySpots(tempPosition) || tempStone == null){
-                //System.out.println(deltaX + "-" + deltaY + " empty");
                 break;
             }
             else if (placedStone.getStoneColor() != getStone(tempPosition).getStoneColor()){
@@ -211,7 +206,6 @@ public class Board {
             }
             else if (placedStone.getStoneColor() == getStone(tempPosition).getStoneColor()){
                 //remove everything along the path
-                //System.out.println(deltaX + "-" + deltaY + " HIT");
                 removeStonesAtPositions(capturePositions, numberOfCaptures);
                 break;
             }
@@ -272,12 +266,6 @@ public class Board {
                 value--;
             }
         }
-
         return value;
     }
-
-    public void replaceStones(ArrayList<Stone> newStones){
-        stonesOnBoard = newStones;
-    }
-
 }

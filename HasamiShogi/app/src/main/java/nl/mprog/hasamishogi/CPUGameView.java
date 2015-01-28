@@ -1,5 +1,15 @@
 package nl.mprog.hasamishogi;
 
+/**
+ * Rukshar Wagid Hosain
+ * faraicha@live.nl
+ * 10694676
+ */
+
+/**
+ * THIS CLASS DRAWS THE CPU GAMEVIEW
+ */
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,7 +26,7 @@ import java.util.ArrayList;
 
 public class CPUGameView extends View {
 
-    private float boardWidth, screenHeight;
+    private static float boardWidth;
     private Paint statPaint, textPaint, textPaintBold, brownPaint, grayPaint, whitePaint;
     private Bitmap bigWhiteStone, bigBlackStone, whiteStone, blackStone;
     public static Board board;
@@ -42,7 +52,6 @@ public class CPUGameView extends View {
         textPaintBold.setTextSize(80);
         textPaintBold.setTextAlign(Paint.Align.LEFT);
 
-
         brownPaint = new Paint();
         brownPaint.setColor(Color.rgb(210, 180, 140));
 
@@ -53,7 +62,7 @@ public class CPUGameView extends View {
         whitePaint.setColor(Color.WHITE);
 
         // Load bitmaps for stones
-        int stoneDimension = (int) (boardWidth / 9);
+        int stoneDimension = (int) (boardWidth / Board.NUMBER_OF_STONES);
         bigWhiteStone = BitmapFactory.decodeResource(this.getResources(), R.drawable.whitestone);
         whiteStone = Bitmap.createScaledBitmap(bigWhiteStone, stoneDimension, stoneDimension, true);
         bigBlackStone = BitmapFactory.decodeResource(this.getResources(), R.drawable.blackstone);
@@ -64,8 +73,11 @@ public class CPUGameView extends View {
 
         // Initialize CPU player
         cpuPlayerColor = Stone.BLACK_STONE_COLOR;
-        cpuPlayer = new AI(AI.EASY_CPU, cpuPlayerColor);
-
+        if(SettingsActivity.checkedIndex == 0){
+            cpuPlayer = new AI(AI.EASY_CPU, cpuPlayerColor);
+        }else{
+            cpuPlayer = new AI(AI.HARD_CPU, cpuPlayerColor);
+        }
         // Place Stones on Board
         for (int i = 0; i < Board.NUMBER_OF_STONES; i++) {
             board.addStones(new Stone(i + 72, Stone.WHITE_STONE_COLOR));
@@ -78,7 +90,6 @@ public class CPUGameView extends View {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         int screenWidth = display.getWidth();
-        screenHeight = display.getHeight();
         boardWidth = screenWidth;
     }
 
@@ -148,9 +159,9 @@ public class CPUGameView extends View {
                 canvas.drawBitmap(blackStone, x, y + (boardWidth / 3), null);
             }
             if (tempStone.isSelected() && tempStone.getStoneColor() == Stone.WHITE_STONE_COLOR) {
-                canvas.drawCircle((float) (x + offset), (float) (y + offset + (boardWidth / 3)), (float) whiteStone.getWidth() / 4 + 5, whitePaint);
+                canvas.drawCircle((x + offset), (y + offset + (boardWidth / 3)), (float) whiteStone.getWidth() / 4 + 5, whitePaint);
             } else if (tempStone.isSelected() && tempStone.getStoneColor() == Stone.BLACK_STONE_COLOR) {
-                canvas.drawCircle((float) (x + offset), (float) (y + offset + (boardWidth / 3)), (float) whiteStone.getWidth() / 4 + 5, grayPaint);
+                canvas.drawCircle((x + offset), (y + offset + (boardWidth / 3)), (float) whiteStone.getWidth() / 4 + 5, grayPaint);
             }
         }
     }
@@ -167,18 +178,15 @@ public class CPUGameView extends View {
 
     // Returns the index belonging to coordinates on the board
     private int coordinatesToPosition(float x, float y) {
-        //System.out.println(x + " x coord");
-        //System.out.println(y + " y coord");
         int squareOnBoard = (int) (boardWidth / Board.BOARD_DIMENSION);
         int xIndex = (int) x / squareOnBoard;
-        int tussenstap = (int) ((int) y - (boardWidth / 3));
-        int yIndex = (tussenstap / squareOnBoard) * Board.BOARD_DIMENSION;
+        int deltaY = (int) ((int) y - (boardWidth / 3));
+        int yIndex = (deltaY / squareOnBoard) * Board.BOARD_DIMENSION;
         int position = xIndex + yIndex;
         return position;
     }
 
     private void aiDoTurn(){
-        System.out.println("aidoturn");
         cpuPlayer.doTurn(board);
         board.toggleCurrentPlayer();
     }
@@ -212,7 +220,6 @@ public class CPUGameView extends View {
             //Human move
             case MotionEvent.ACTION_DOWN:
                 int pressedPosition = coordinatesToPosition(x, y);
-                //System.out.println(pressedPosition);
                 if (!board.emptySpots(pressedPosition)) {
                     Stone touchedStone = board.getStone(pressedPosition);
                     if (board.hasSelectedStone() == false && touchedStone.getStoneColor() == board.getCurrentPlayer()) {

@@ -13,22 +13,22 @@
         android:textSize="25dp"
         android:layout_centerHorizontal="true"/>
 
-    <RadioButton
+    <RadioGroup
+        android:id="@+id/radiogroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CPU EASY"
-        android:id="@+id/radioButtonEasy"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <RadioButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CPU HARD"
-        android:id="@+id/radioButtonHard"
-        android:layout_below="@+id/radioButtonEasy"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:orientation="vertical"
+        android:layout_below="@+id/textView">
+        <RadioButton
+            android:id="@+id/easyCpu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CPU Level Easy"/>
+        <RadioButton
+            android:id="@+id/hardCpu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CPU Level Hard"/>
+    </RadioGroup>
 
 </RelativeLayout>
