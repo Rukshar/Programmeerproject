@@ -42,12 +42,12 @@ public class GameView extends View{
 
         textPaint = new Paint();
         textPaint.setColor(Color.BLACK);
-        textPaint.setTextSize(50);
+        textPaint.setTextSize(30);
         textPaint.setTextAlign(Paint.Align.LEFT);
 
         textPaintBold = new Paint();
         textPaintBold.setColor(Color.DKGRAY);
-        textPaintBold.setTextSize(80);
+        textPaintBold.setTextSize(50);
         textPaintBold.setTextAlign(Paint.Align.LEFT);
 
         brownPaint = new Paint();
