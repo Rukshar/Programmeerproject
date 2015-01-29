@@ -1,4 +1,4 @@
 Programmeerproject
 ==================
 
-App ontwikkelen voor minor programmeren
+Hasami Shogi is a Japanese chess game. This app was made for minor programming.
