@@ -64,4 +64,11 @@ public class WinGameActivity extends Activity {
         });
     }
 
+    // If back button on device is pressed, go back to menu
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
+    }
+
 }

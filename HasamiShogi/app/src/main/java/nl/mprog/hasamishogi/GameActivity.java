@@ -10,6 +10,7 @@ package nl.mprog.hasamishogi;
  * THIS CLASS SETS THE GAMEACTIVITY TO A GAMEVIEW
  */
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 
@@ -27,5 +28,12 @@ public class GameActivity extends ActionBarActivity {
         }else{
             setContentView(new CPUGameView(this));
         }
+    }
+
+    // If back button on device is pressed, go back to menu
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
     }
 }

@@ -117,13 +117,13 @@ public class CPUGameView extends View {
     }
 
     public void winGame(){
-        if (whiteScore >= 4) {
+        if (whiteScore <= 4) {
             Intent intent = new Intent(this.getContext(), WinGameActivity.class);
             intent.putExtra("winner", "CPU");
             intent.putExtra("cpu", true);
             this.getContext().startActivity(intent);
         }
-        if (blackScore >= 4) {
+        if (blackScore <= 4) {
             Intent intent = new Intent(this.getContext(), WinGameActivity.class);
             intent.putExtra("winner", "Player 1");
             intent.putExtra("cpu", true);
@@ -233,6 +233,7 @@ public class CPUGameView extends View {
                             board.removeCapturedStones(movedStone);
                             invalidate();
                             board.toggleCurrentPlayer();
+                            //Computer move
                             new Thread(new Runnable() {
                                 // Computer move
                                 public void run() {

@@ -50,7 +50,6 @@ public class GameView extends View{
         textPaintBold.setTextSize(80);
         textPaintBold.setTextAlign(Paint.Align.LEFT);
 
-
         brownPaint = new Paint();
         brownPaint.setColor(Color.rgb(210,180,140));
 
@@ -109,12 +108,12 @@ public class GameView extends View{
     }
 
     public void winGame(){
-        if (whiteScore >= 4) {
+        if (whiteScore <= 4) {
             Intent intent = new Intent(this.getContext(), WinGameActivity.class);
             intent.putExtra("winner", "Player 2");
             this.getContext().startActivity(intent);
         }
-        if (blackScore >= 4) {
+        if (blackScore <= 4) {
             Intent intent = new Intent(this.getContext(), WinGameActivity.class);
             intent.putExtra("winner", "Player 1");
             this.getContext().startActivity(intent);
